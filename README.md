@@ -26,9 +26,6 @@ Antigravity (or Claude Code / Codex) reads your codebase and draws an interactiv
 
 </div>
 
-<p align="center">
-  <a href="https://youtu.be/NTUUzC7L_NQ"><img src="docs/images/video.jpg" alt="Watch the walkthrough on YouTube: installing Floorplan, then a tour of the map of Brewline, a coffee subscription app" width="100%"></a>
-</p>
 <p align="center"><sub>▶ <a href="https://youtu.be/NTUUzC7L_NQ">Watch the walkthrough</a>: installing Floorplan, then a tour of Brewline, a demo coffee-subscription app built across four repos.</sub></p>
 <p align="center"><b><a href="https://haydenschmitty.github.io/floorplan-demo/">Try the live demo →</a></b> Explore the Brewline map in your browser, no install needed.</p>
 
