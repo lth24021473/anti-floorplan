@@ -1,0 +1,29 @@
+{
+  "$schema": "https://antigravity.google/schemas/v1/plugin.json",
+  "name": "floorplan",
+  "displayName": "Floorplan",
+  "version": "1.0.0",
+  "description": "Draw an interactive, plain-English map of any codebase or PRD with health checks, screens, guided flows, recent work highlights, and live Ask Q&A.",
+  "logo": "assets/logo.png",
+  "suggestedPrompts": [
+    "Draw a floorplan of this codebase",
+    "Update the floorplan with what we just changed",
+    "Here's my PRD — draw a floorplan blueprint of what we'd need to build"
+  ],
+  "author": {
+    "name": "Hayden Smith",
+    "url": "https://github.com/haydenschmitty"
+  },
+  "homepage": "https://github.com/haydenschmitty/floorplan",
+  "repository": "https://github.com/haydenschmitty/floorplan",
+  "license": "MIT",
+  "keywords": [
+    "codebase",
+    "architecture",
+    "map",
+    "visualization",
+    "onboarding",
+    "diagram",
+    "documentation"
+  ]
+}

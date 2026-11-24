@@ -1,0 +1,95 @@
+# Troubleshooting
+
+### The Ask bar says it needs the Antigravity CLI (`agy`) or Claude Code / Codex
+The map is open without a way to ask questions. Either:
+- install the [Antigravity CLI (`agy`)](https://antigravity.google/docs/install), sign in by running `agy` once in a terminal, and restart `node floorplan/serve.mjs`;
+- or install the [Claude Code CLI](https://code.claude.com/docs/en/overview) or [Codex CLI](https://developers.openai.com/codex/cli) and restart `node floorplan/serve.mjs`.
+
+### The CLI is installed but isn't found
+`serve.mjs` looks for `agy` on your PATH and in `~/.gemini/bin` (and standard Antigravity app folders), as well as `claude` and `codex`. If your binary lives somewhere else, point directly to it:
+
+```bash
+node floorplan/serve.mjs --agy /path/to/agy
+node floorplan/serve.mjs --claude /path/to/claude
+node floorplan/serve.mjs --codex /path/to/codex
+```
+
+### Codex: the Ask bar says it needs Codex
+The map's server looks for `codex` on your PATH and, on Windows, for the CLI that comes with the Codex desktop app. Install the [Codex CLI](https://developers.openai.com/codex/cli), or point the server at yours:
+
+```bash
+node floorplan/serve.mjs --codex /path/to/codex
+```
+
+If it says Codex isn't signed in, open the Codex app (or run `codex login`) and sign in with ChatGPT. More in [Floorplan in Codex](codex.md).
+
+### Codex: the map didn't open, or Ask stopped working after Codex opened it
+Codex runs commands in a sandbox, and the map's server needs to keep running and reach the network. Allow the server to run outside the sandbox when Codex asks, or run `node floorplan/serve.mjs` yourself from the project folder.
+
+### A question fails with "Prompt is too long"
+With Claude Code, update the map (`claude plugin update floorplan@floorplan`, then rebuild): questions now run without your MCP servers, whose tool descriptions were filling the context. With Codex, the MCP servers you set up for Codex still load, so turn off the ones you don't need (`enabled = false` under that server in `~/.codex/config.toml`).
+
+### `node` isn't recognized
+Install [Node.js](https://nodejs.org) 18 or newer, then start a new session so Claude Code or Codex picks it up.
+
+### Claude or Codex keeps asking to run `node` scripts
+In Claude Code, Floorplan pre-approves its own scripts while it's running, but it may still ask in some setups. Choose the option to always allow them for this project. Codex asks according to your approval settings; allowing Floorplan's `node` scripts for the project stops the prompts.
+
+### The skill doesn't show up
+Plugins load when a session starts, so start a new one after installing. Check that it's installed and enabled:
+
+```bash
+agy plugin list
+agy plugin validate --strict /path/to/floorplan
+```
+
+Plain requests like "make me a floorplan" work without the slash command. If you do want it, type `/floorplan` in Antigravity, `/floorplan:floorplan` in Claude Code, or `$floorplan` in Codex.
+
+### The map looks out of date
+Ask Claude or Codex to "update the floorplan". If a tab was already open, it reloads itself once the update finishes.
+
+### The map is blank, or stuck on "Laying out"
+Maps made before version 0.1.3 load their layout engine from the internet, so check your connection or any content blocker, or ask Claude to "update the floorplan". Newer maps have everything built in and work offline.
+
+### The Ask bar has no Change switch
+**Change** appears only on a [blueprint](getting-started.md#plan-something-you-havent-built-yet), opened through its server (`node floorplan/serve.mjs`) with the Claude Code CLI or Codex available. A map of real code doesn't have it: ask Claude Code or Codex to change the code, then update the floorplan.
+
+### A change to a blueprint failed, or I don't like it
+If the updated plan doesn't pass Floorplan's checks after a second try, nothing is saved and the map stays as it was; try asking more specifically. If a change went through but isn't what you wanted, press **Undo** in its summary, or ask for another change. The previous versions are kept in `floorplan/.cache/history/`.
+
+### A connection is missing
+Floorplan finds most web requests and imports by reading the code, but not all of them, for example requests to an address that only exists in settings. Ask Claude to add the missing connection to the floorplan; it records it in `architecture.json` and it stays on every update.
+
+### A file is in the wrong part, or under "Unassigned"
+Ask Claude to move it, or edit the `paths` patterns in `floorplan/architecture.json` and ask for an update.
+
+### A repo is missing from the map, or the scan lists PROBLEMS
+The scan lists each repo git couldn't list files for, with the likely fix. The usual causes:
+- **git isn't installed**, or isn't on the PATH of whatever runs Floorplan;
+- **"dubious ownership"**: git refuses a checkout owned by a different user, which is common in containers and shared folders. Mark it safe with `git config --global --add safe.directory <folder>`, then update the floorplan.
+
+If you run Floorplan from CI or a script, [unattended mode](unattended.md) turns these into errors, so a map with a repo missing can't slip through.
+
+### "floorplan/ already exists here and isn't a map"
+Your project has its own folder called `floorplan`, which Floorplan won't write into. Rename your folder, or ask Claude to build the map somewhere else; the scan and build scripts accept `--out <folder>`.
+
+### `git status` shows files under `floorplan/`
+They were committed before Floorplan started ignoring the folder. Untrack them, keeping the files on disk:
+
+```bash
+git rm -r --cached floorplan
+```
+
+### Port 4378 is in use
+Nothing to do. The server moves to the next free port, and the URL it prints, or that Claude gives you, is the right one.
+
+### Stopping the background server
+
+```bash
+node floorplan/serve.mjs --stop
+```
+
+It also stops by itself two hours after the last tab closes.
+
+### Still stuck?
+[Open an issue](https://github.com/haydenschmitty/floorplan/issues/new/choose) with what you asked, what happened, whether you used Claude Code or Codex, and the output it showed. Please leave out anything private from your code.
